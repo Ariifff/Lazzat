@@ -1,0 +1,34 @@
+package com.arif.lazzat.data
+
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import android.content.Context
+
+@Database(
+    entities = [PantryItem::class, FavouriteRecipe::class],
+    version = 1,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
+
+    abstract fun pantryDao(): PantryDao
+    abstract fun favouriteDao(): FavouriteDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "lazzat_db"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}

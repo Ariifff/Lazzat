@@ -1,0 +1,12 @@
+package com.arif.lazzat.api
+
+data class RecipeSearchResponse(
+    val results: List<RecipeItem>
+)
+
+data class RecipeItem(
+    val id: Int,
+    val title: String,
+    val image: String,
+    val summary: String?
+)
