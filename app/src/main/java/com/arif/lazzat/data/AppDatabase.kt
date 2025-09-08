@@ -6,8 +6,8 @@ import androidx.room.RoomDatabase
 import android.content.Context
 
 @Database(
-    entities = [PantryItem::class, FavouriteRecipe::class],
-    version = 1,
+    entities = [PantryItem::class, FavouriteEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

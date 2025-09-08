@@ -11,10 +11,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.arif.lazzat.ui.screens.favourite.FavouriteScreen
+import com.arif.lazzat.ui.screens.favourite.FavouriteScreenWrapper
 import com.arif.lazzat.ui.screens.home.HomeScreen
 import com.arif.lazzat.ui.screens.profile.ProfileScreen
-import com.arif.lazzat.ui.screens.history.HistoryFilterScreen
-import com.arif.lazzat.ui.screens.history.HistoryScreen
 import com.arif.lazzat.ui.screens.home.RecipeDetailScreen
 import com.arif.lazzat.ui.screens.home.SearchResultScreen
 import com.arif.lazzat.ui.screens.pantry.PantryScreenWrapper
@@ -38,7 +38,7 @@ fun MainNavGraph() {
     val showBottomBar = currentRoute in setOf(
         Destinations.HOME,
         Destinations.PANTRY,
-        Destinations.HISTORY,
+        Destinations.FAVOURITE,
         Destinations.PROFILE
     )
 
@@ -113,22 +113,12 @@ fun MainNavGraph() {
 
 
             // ======================
-            // HISTORY TAB FLOW (Professional Implementation)
+            // FAVOURITE TAB FLOW
             // ======================
-            composable(Destinations.HISTORY) {
-                Log.d("SCREEN_DEBUG", "HistoryScreen rendering")
-                HistoryScreen(
-                    padding = padding,
-                    onFilterClick = { navController.navigate(Destinations.HISTORY_FILTER) },
-                    onDetailClick = { navController.navigate(Destinations.HISTORY_DETAIL) }
-                )
-            }
 
-            composable(Destinations.HISTORY_FILTER) {
-                HistoryFilterScreen(
-                    onApplyFilters = { navController.popBackStack() },
-                    onCancel = { navController.popBackStack() }
-                )
+            composable(Destinations.FAVOURITE) {
+                Log.d("SCREEN_DEBUG", "FavouriteScreen rendering")
+                FavouriteScreenWrapper(navController)
             }
 
 

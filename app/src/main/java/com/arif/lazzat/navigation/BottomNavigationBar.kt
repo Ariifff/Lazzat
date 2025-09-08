@@ -27,8 +27,8 @@ fun BottomNavigationBar(navController: NavController) {
             icon = Icons.Default.ShoppingCart
         ),
         BottomNavItem(
-            route = Destinations.HISTORY,
-            label = "History",
+            route = Destinations.FAVOURITE,
+            label = "Favourites",
             icon = Icons.Default.List
         ),
         BottomNavItem(

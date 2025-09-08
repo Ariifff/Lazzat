@@ -56,6 +56,9 @@ fun PantryScreen(viewModel: PantryFavouriteViewModel) {
     val pantryList by viewModel.pantryItems.collectAsStateWithLifecycle(initialValue = emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    var showDialog by remember { mutableStateOf(false) }
+    var itemToDelete by remember { mutableStateOf<PantryItem?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,10 +131,24 @@ fun PantryScreen(viewModel: PantryFavouriteViewModel) {
                     PantryItemCard(
                         item = item,
                         onToggle = { updatedItem -> viewModel.updatePantryItem(updatedItem) },
-                        onDelete = { viewModel.deletePantryItem(it) }
+                        onDelete = {
+                            itemToDelete = item
+                            showDialog = true
+                        }
                     )
                 }
             }
+        }
+        if (showDialog && itemToDelete != null) {
+            ConfirmDeleteDialog(
+                showDialog = true,
+                onDismiss = { showDialog = false },
+                onConfirm = {
+                    viewModel.deletePantryItem(itemToDelete!!)
+                    showDialog = false
+                    itemToDelete = null
+                }
+            )
         }
     }
 }
@@ -268,6 +285,31 @@ fun PantryItemCard(
         }
     }
 }
-
-
-
+@Composable
+fun ConfirmDeleteDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = {
+                Text(text = "Delete Ingredient")
+            },
+            text = {
+                Text("Are you sure you want to remove this ingredient from your pantry?")
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}

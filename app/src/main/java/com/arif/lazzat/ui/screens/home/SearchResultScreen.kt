@@ -31,10 +31,16 @@ import com.arif.lazzat.api.RecipeItem
 import androidx.compose.runtime.livedata.observeAsState
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
 import com.arif.lazzat.api.RecipeRepository
 import com.arif.lazzat.api.RetrofitInstance
+import com.arif.lazzat.data.AppDatabase
+import com.arif.lazzat.data.FavouriteEntity
 import com.arif.lazzat.navigation.Destinations
+import com.arif.lazzat.viewmodel.PantryFavouriteViewModel
+import com.arif.lazzat.viewmodel.PantryFavouriteViewModelFactory
 import com.arif.lazzat.viewmodel.RecipeViewModelFactory
 
 
@@ -57,6 +63,12 @@ fun SearchResultScreen(
         viewModelStoreOwner = navController.currentBackStackEntry!!,
         factory = RecipeViewModelFactory(repository)
     )
+
+    val pantryFavouriteViewModel: PantryFavouriteViewModel = viewModel(
+        viewModelStoreOwner = navController.currentBackStackEntry!!,
+        factory = PantryFavouriteViewModelFactory(AppDatabase.getDatabase(LocalContext.current))
+    )
+
 
     val isLoading by recipeViewModel.isLoading.observeAsState(false)
     val recipes by recipeViewModel.recipes.observeAsState(emptyList())
@@ -131,7 +143,7 @@ fun SearchResultScreen(
                         items = recipes,
                         key = { item -> item.id }
                     ) { recipe ->
-                        DishCardApi(recipe = recipe, navController = navController)
+                        DishCardApi(recipe = recipe, navController = navController, viewmodel = pantryFavouriteViewModel)
                     }
                 }
             }
@@ -141,8 +153,15 @@ fun SearchResultScreen(
 
 
 @Composable
-fun DishCardApi(recipe: RecipeItem, navController: NavController, modifier: Modifier = Modifier) {
+fun DishCardApi(recipe: RecipeItem, navController: NavController, viewmodel : PantryFavouriteViewModel, modifier: Modifier = Modifier) {
+
     var isFavorite by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+
+    LaunchedEffect(recipe.id) {
+        isFavorite = viewmodel.isFavourite(recipe.id)
+    }
 
     Card(
         modifier = modifier
@@ -179,7 +198,19 @@ fun DishCardApi(recipe: RecipeItem, navController: NavController, modifier: Modi
             )
 
             IconButton(
-                onClick = { isFavorite = !isFavorite },
+                onClick = {
+                    val fav = FavouriteEntity(
+                        id = recipe.id,
+                        title = recipe.title,
+                        image = recipe.image
+                    )
+                    viewmodel.toggleFavourite(fav)
+                    isFavorite = !isFavorite
+                    Toast.makeText(
+                        context,
+                        if (isFavorite) "Added to favourites" else "Removed from favourites", Toast.LENGTH_SHORT).show()
+                          },
+
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
@@ -190,6 +221,7 @@ fun DishCardApi(recipe: RecipeItem, navController: NavController, modifier: Modi
                     contentDescription = "Favorite",
                     tint = if (isFavorite) Color.Red else Color.White
                 )
+
             }
 
             Column(

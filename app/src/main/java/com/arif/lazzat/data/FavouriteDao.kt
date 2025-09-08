@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavouriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecipe(recipe: FavouriteRecipe)
+    suspend fun insertFavourite(recipe: FavouriteEntity)
 
     @Delete
-    suspend fun deleteRecipe(recipe: FavouriteRecipe)
+    suspend fun deleteFavourite(recipe: FavouriteEntity)
 
-    @Query("SELECT * FROM favourite_recipes")
-    fun getAllRecipes(): Flow<List<FavouriteRecipe>>
+    @Query("SELECT * FROM favourites")
+    fun getAllFavourites(): Flow<List<FavouriteEntity>>
+
+    @Query("SELECT * FROM favourites WHERE id = :id LIMIT 1")
+    suspend fun getRecipeById(id: String): FavouriteEntity?
 }

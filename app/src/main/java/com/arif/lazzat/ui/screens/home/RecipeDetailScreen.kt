@@ -161,7 +161,8 @@ fun RecipeDetailScreen(
             Button(
                 modifier = Modifier.align(
                     Alignment.CenterHorizontally
-                ),
+                )
+                    .width(200.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = darkcolor),
                 onClick = {
                     val query = title
