@@ -1,6 +1,7 @@
 package com.arif.lazzat.ui.screens.home
 
 import RecipeViewModel
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -58,12 +59,6 @@ fun HomeScreen(
         factory = PantryFavouriteViewModelFactory(db)
     )
 
-    val repository = RecipeRepository(RetrofitInstance.api)
-
-    val recipeViewModel: RecipeViewModel = viewModel(
-
-        factory = RecipeViewModelFactory(repository)
-    )
 
     val pantryItems by viewModel.pantryItems.collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -242,16 +237,14 @@ fun HomeScreen(
                         Toast.makeText(context, "Please enter at least one ingredient", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        // trigger API call
-                        recipeViewModel.searchRecipes(
-                            ingredients = ingredientInput,
-                            cuisines = selectedCuisines.toList(),
-                            diets = selectedDiets.toList()
+                        // CHANGED: Navigate with arguments instead of calling ViewModel here
+                        navController.navigate(
+                            "${Destinations.HOME_SEARCH}?" +
+                                    "ingredients=${Uri.encode(ingredientInput)}&" +
+                                    "cuisines=${Uri.encode(selectedCuisines.joinToString(","))}&" +
+                                    "diets=${Uri.encode(selectedDiets.joinToString(","))}"
                         )
-                        // navigate only, results will be observed in results screen
-                        navController.navigate(Destinations.HOME_SEARCH)
                     }
-
                 },
                 modifier = Modifier
                     .fillMaxWidth()

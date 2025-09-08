@@ -68,45 +68,36 @@ fun MainNavGraph() {
 
             }
             composable(
-                route = Destinations.HOME_SEARCH + "?ingredients={ingredients}&cuisines={cuisines}&diet={diet}",
+                route = Destinations.HOME_SEARCH + "?ingredients={ingredients}&cuisines={cuisines}&diets={diets}",
                 arguments = listOf(
                     navArgument("ingredients") { type = NavType.StringType; defaultValue = "" },
                     navArgument("cuisines") { type = NavType.StringType; defaultValue = "" },
-                    navArgument("diet") { type = NavType.StringType; defaultValue = "" }
+                    navArgument("diets") { type = NavType.StringType; defaultValue = "" }
                 )
             ) { backStackEntry ->
-                val ingredientsArg = backStackEntry.arguments?.getString("ingredients") ?: ""
-                val cuisinesArg = backStackEntry.arguments?.getString("cuisines") ?: ""
-                val dietArg = backStackEntry.arguments?.getString("diet") ?: ""
 
                 SearchResultScreen(
                     navController = navController,
-                    ingredients = ingredientsArg,
-                    cuisines = cuisinesArg,
-                    diet = dietArg
                 )
             }
 
             composable(
                 route = Destinations.HOME_DETAIL +
-                        "?id={id}&title={title}&image={image}&summary={summary}",
+                        "?id={id}&title={title}&image={image}",
                 arguments = listOf(
                     navArgument("id") { type = NavType.StringType; defaultValue = "" },
                     navArgument("title") { type = NavType.StringType; defaultValue = "" },
                     navArgument("image") { type = NavType.StringType; defaultValue = "" },
-                    navArgument("summary") { type = NavType.StringType; defaultValue = "" }
                 )
             ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id") ?: ""
                 val title = backStackEntry.arguments?.getString("title") ?: ""
                 val image = backStackEntry.arguments?.getString("image") ?: ""
-                val summary = backStackEntry.arguments?.getString("summary") ?: ""
 
                 RecipeDetailScreen(
                     id = id,
                     title = title,
-                    image = image,
-                    summary = summary
+                    image = image
                 )
             }
 

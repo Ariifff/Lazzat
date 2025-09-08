@@ -31,6 +31,7 @@ import com.arif.lazzat.api.RecipeItem
 import androidx.compose.runtime.livedata.observeAsState
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.arif.lazzat.api.RecipeRepository
 import com.arif.lazzat.api.RetrofitInstance
 import com.arif.lazzat.navigation.Destinations
@@ -42,22 +43,39 @@ import com.arif.lazzat.viewmodel.RecipeViewModelFactory
 @Composable
 fun SearchResultScreen(
     navController: NavController,
-    ingredients: String,
-    cuisines: String,
-    diet: String,
 
 ) {
+    val arguments = navController.currentBackStackEntry?.arguments
+    val ingredientsArg = arguments?.getString("ingredients") ?: ""
+    val cuisinesArg = arguments?.getString("cuisines") ?: ""
+    val dietsArg = arguments?.getString("diets") ?: ""
+
     val repository = remember { RecipeRepository(RetrofitInstance.api) }
 
 
     val recipeViewModel: RecipeViewModel = viewModel(
-        viewModelStoreOwner = navController.getBackStackEntry(Destinations.HOME),
+        viewModelStoreOwner = navController.currentBackStackEntry!!,
         factory = RecipeViewModelFactory(repository)
     )
 
+    val isLoading by recipeViewModel.isLoading.observeAsState(false)
     val recipes by recipeViewModel.recipes.observeAsState(emptyList())
 
-    Log.d("API_TEST", "Ingredients: $ingredients, Cuisines: $cuisines, Diet: $diet")
+
+    var hasInitialSearch by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(ingredientsArg, cuisinesArg, dietsArg) {
+        // ADD THIS CONDITION: Only search if we haven't searched before AND have ingredients
+        if (!hasInitialSearch && ingredientsArg.isNotEmpty()) {
+            Log.d("API_TEST", "Triggering INITIAL search from ResultScreen")
+            recipeViewModel.searchRecipes(
+                ingredients = ingredientsArg,
+                cuisines = cuisinesArg.split(",").filter { it.isNotEmpty() },
+                diets = dietsArg.split(",").filter { it.isNotEmpty() }
+            )
+            hasInitialSearch = true // MARK AS SEARCHED
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -70,6 +88,16 @@ fun SearchResultScreen(
         }
     ) { padding ->
         when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
             recipes.isEmpty() -> {
                 Box(
                     modifier = Modifier
@@ -118,17 +146,16 @@ fun DishCardApi(recipe: RecipeItem, navController: NavController, modifier: Modi
 
     Card(
         modifier = modifier
-            .height(220.dp)
+            .height(240.dp) // Slightly increased height to fit new info
             .clip(RoundedCornerShape(16.dp))
             .clickable {
+                // CHANGED: Removed summary from navigation as it will be null
                 navController.navigate(
                     "${Destinations.HOME_DETAIL}?" +
                             "id=${recipe.id}&" +
                             "title=${Uri.encode(recipe.title)}&" +
-                            "image=${Uri.encode(recipe.image)}&" +
-                            "summary=${Uri.encode(recipe.summary ?: "")}&"
+                            "image=${Uri.encode(recipe.image)}"
                 )
-
             },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
@@ -174,8 +201,10 @@ fun DishCardApi(recipe: RecipeItem, navController: NavController, modifier: Modi
                     text = recipe.title,
                     fontSize = 16.sp,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
+                    maxLines = 2 // Ensure long titles don't overflow
                 )
+
             }
         }
     }

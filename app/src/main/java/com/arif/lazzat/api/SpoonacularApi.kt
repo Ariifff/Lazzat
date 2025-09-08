@@ -8,12 +8,12 @@ interface SpoonacularApi {
 
     @GET("recipes/complexSearch")
     suspend fun searchRecipes(
-        @Query("includeIngredients") ingredients: String?,
+        @Query("includeIngredients") includeIngredients: String?,
         @Query("cuisine") cuisines: String?,  // comma-separated
         @Query("diet") diets: String?,        // comma-separated
         @Query("number") number: Int = 100,
-        @Query("ranking") ranking: Int = 1,
-        @Query("addRecipeInformation") addInfo: Boolean = true,
+        @Query("ranking") ranking: Int = 1, // CHANGE 1: Default to ranking=2 for better sorting
+        @Query("addRecipeInformation") addInfo: Boolean = true, // CHANGE 2: Set to FALSE to save credits
         @Query("apiKey") apiKey: String
     ): RecipeSearchResponse
 
@@ -25,3 +25,4 @@ interface SpoonacularApi {
     ): RecipeDetailResponse
 
 }
+

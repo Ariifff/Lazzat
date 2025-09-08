@@ -8,26 +8,28 @@ import com.arif.lazzat.api.RecipeDetailResponse
 import com.arif.lazzat.api.RecipeRepository
 import kotlinx.coroutines.launch
 
-sealed class DetailUiState {
-    object Loading : DetailUiState()
-    data class Success(val recipe: RecipeDetailResponse) : DetailUiState()
-    data class Error(val message: String) : DetailUiState()
-}
 
 class RecipeDetailViewModel(
     private val repository: RecipeRepository
 ) : ViewModel() {
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
 
     private val _recipeDetails = MutableLiveData<RecipeDetailResponse?>()
     val recipeDetails: LiveData<RecipeDetailResponse?> = _recipeDetails
 
     fun fetchRecipeDetails(id: Int) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val response = repository.getRecipeDetails(id)
                 _recipeDetails.value = response
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+            finally {
+                _isLoading.value = false
             }
         }
     }

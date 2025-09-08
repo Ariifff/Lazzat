@@ -5,7 +5,8 @@ data class RecipeDetailResponse(
     val title: String,
     val image: String,
     val summary: String?,
-    val extendedIngredients: List<ExtendedIngredient>
+    val extendedIngredients: List<ExtendedIngredient>,
+    val instructions: String
 )
 
 data class ExtendedIngredient(

@@ -19,44 +19,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.arif.lazzat.api.RecipeRepository
+import com.arif.lazzat.ui.theme.darkcolor
+import com.arif.lazzat.ui.theme.primarycolor
 import com.arif.lazzat.viewmodel.RecipeDetailViewModel
 import com.arif.lazzat.viewmodel.RecipeDetailViewModelFactory
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun recipeshow(){
-    RecipeDetailScreen(
-        id= "1",
-        title = "Chicken Alfredo",
-        image = "https://www.themealdb.com/images/media/meals/sytuqu1511553755.jpg",
-        summary = "This is a delicious chicken alfredo recipe.",
 
-    )
-}
-*/
 
 @Composable
 fun RecipeDetailScreen(
     id: String,
     title: String,
     image: String,
-    summary: String,
 ) {
-
     val repository = remember { RecipeRepository(com.arif.lazzat.api.RetrofitInstance.api) }
 
     val viewModel: RecipeDetailViewModel = viewModel(
         factory = RecipeDetailViewModelFactory(repository)
     )
 
+    val isLoading by viewModel.isLoading.observeAsState(false)
+
     val details by viewModel.recipeDetails.observeAsState()
+    val context = LocalContext.current
+
 
     // fetch details when screen opens
     LaunchedEffect(id) {
@@ -65,86 +56,124 @@ fun RecipeDetailScreen(
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-    ) {
-        // Recipe Image
-        Image(
-            painter = rememberAsyncImagePainter(model = image),
-            contentDescription = title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-        )
+    if (isLoading) {
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Title
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        AndroidView(
-            factory = { context ->
-                TextView(context).apply {
-                    text = Html.fromHtml(summary, Html.FROM_HTML_MODE_LEGACY)
-                    textSize = 16f
-                    setLineSpacing(1.2f, 1.2f) // better spacing
-                    linksClickable = true
-                    movementMethod = android.text.method.LinkMovementMethod.getInstance()
-                }
-            },
-            update = { textView ->
-                textView.text = Html.fromHtml(summary, Html.FROM_HTML_MODE_LEGACY)
-            }
-        )
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        // Ingredients Section
-        Text("Ingredients", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-
-        details?.extendedIngredients?.forEach { ing ->
-            Text("• ${ing.original}", style = MaterialTheme.typography.bodyMedium)
-        } ?: Text("Loading ingredients...")
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        /*
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Instructions
-        Text("Instructions", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        instructions.forEachIndexed { index, step ->
-            Text("${index + 1}. $step", style = MaterialTheme.typography.bodyMedium)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
+    } else {
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+        ) {
+            // Recipe Image
+            Image(
+                painter = rememberAsyncImagePainter(model = image),
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
 
-        // YouTube Link Button
-        if (youtubeUrl != null) {
-            val context = LocalContext.current
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Title
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ✅ Summary from API
+            Text(
+                "Summary",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            details?.summary?.let { safeSummary ->
+                AndroidView(
+                    factory = { context ->
+                        TextView(context).apply {
+                            text = Html.fromHtml(safeSummary, Html.FROM_HTML_MODE_LEGACY)
+                            textSize = 16f
+                            setLineSpacing(1.2f, 1.2f)
+                            linksClickable = true
+                            movementMethod = android.text.method.LinkMovementMethod.getInstance()
+                        }
+                    },
+                    update = { textView ->
+                        textView.text = Html.fromHtml(safeSummary, Html.FROM_HTML_MODE_LEGACY)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Ingredients Section
+            Text(
+                "Ingredients",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            details?.extendedIngredients?.forEach { ing ->
+                Text("• ${ing.original}", style = MaterialTheme.typography.bodyMedium)
+            } ?: Text("Loading ingredients...")
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ✅ Instructions from API
+            Text(
+                "Instructions",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            details?.instructions?.let { safeInstructions ->
+                AndroidView(
+                    factory = { context ->
+                        TextView(context).apply {
+                            text = Html.fromHtml(safeInstructions, Html.FROM_HTML_MODE_LEGACY)
+                            textSize = 16f
+                            setLineSpacing(1.2f, 1.2f)
+                            linksClickable = true
+                            movementMethod = android.text.method.LinkMovementMethod.getInstance()
+
+
+                        }
+                    },
+                    update = { textView ->
+                        textView.text = Html.fromHtml(safeInstructions, Html.FROM_HTML_MODE_LEGACY)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
+                modifier = Modifier.align(
+                    Alignment.CenterHorizontally
+                ),
+                colors = ButtonDefaults.buttonColors(containerColor = darkcolor),
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val query = title
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.youtube.com/results?search_query=$query recipe")
+                    )
                     context.startActivity(intent)
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
+                }) {
                 Text("Watch on YouTube")
             }
         }
-        */
     }
 }
+
