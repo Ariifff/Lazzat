@@ -59,7 +59,7 @@ It parses data such as:
 
 | Home Screen | Pantry | Recipe Details | Favourites |
 |--------------|--------|----------------|-------------|
-| ![Home](screenshots/home.png) | ![Pantry](screenshots/pantry.png) | ![Details](screenshots/details.png) | ![Favourites](screenshots/favourites.png) |
+| ![Home](screenshots/homepage.png) | ![Pantry](screenshots/pantrypage.png) | ![Favourites](screenshots/favouritespage.png) | ![Result](screenshots/resultpage.png) | ![Details](screenshots/detailpage1.png) | ![Details](screenshots/detailpage2.png) | ![Details](screenshots/detailpage3.png) 
 
 > 💡 **Tip:** Store screenshots inside a folder named `screenshots` in your project root directory.
 
