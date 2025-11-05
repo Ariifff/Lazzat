@@ -55,9 +55,9 @@ It parses data such as:
 
 ## 📸 Screenshots
 
-| Home Screen | Pantry | Favourites | Result | Recipe Details | Recipe Details | Recipe Details | 
-|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-| ![Home](screenshots/homepage.png) | ![Pantry](screenshots/pantrypage.png) | ![Favourites](screenshots/favouritepage.png) | ![Result](screenshots/resultpage.png) | ![Details](screenshots/detailpage1.png) | ![Details](screenshots/detailpage2.png) | ![Details](screenshots/detailpage3.png) 
+| Home Screen | Pantry | Favourites | Result | Recipe Details | Recipe Details | Recipe Details |
+|--------------|---------|-------------|---------|----------------|----------------|----------------|
+| <img src="screenshots/homepage.png" height="500"/> | <img src="screenshots/pantrypage.png" height="500"/> | <img src="screenshots/favouritepage.png" height="500"/> | <img src="screenshots/resultpage.png" height="500"/> | <img src="screenshots/detailpage1.png" height="500"/> | <img src="screenshots/detailpage2.png" height="500"/> | <img src="screenshots/detailpage3.png" height="500"/> | 
 
 ---
 
