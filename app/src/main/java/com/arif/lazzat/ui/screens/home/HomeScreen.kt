@@ -1,8 +1,10 @@
 package com.arif.lazzat.ui.screens.home
 
 import RecipeViewModel
+import android.app.Activity
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -58,6 +60,15 @@ fun HomeScreen(
     val viewModel: PantryFavouriteViewModel = viewModel(
         factory = PantryFavouriteViewModelFactory(db)
     )
+
+    var showExitDialog by remember { mutableStateOf(false) }
+    val activity = context as? Activity
+
+    BackHandler {
+        showExitDialog = true
+    }
+
+
 
 
     val pantryItems by viewModel.pantryItems.collectAsStateWithLifecycle(initialValue = emptyList())
@@ -257,5 +268,24 @@ fun HomeScreen(
                 Text("Search Recipes", color = Color.White)
             }
         }
+    }
+
+    // Exit Dialog
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text("Exit App") },
+            text = { Text("Are you sure you want to close the app?") },
+            confirmButton = {
+                TextButton(onClick = { activity?.finishAffinity() }) {
+                    Text("Exit")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
