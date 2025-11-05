@@ -37,7 +37,7 @@ Just enter your ingredients, and Lazzat will fetch delicious recipes — complet
 
 | Layer | Technologies |
 |-------|---------------|
-| **Frontend** | Kotlin, XML, Jetpack Components (Navigation, ViewBinding, LiveData) |
+| **Frontend** | Kotlin, Jetpack Components (Navigation, ViewBinding, LiveData) |
 | **Architecture** | MVVM (Model-View-ViewModel) |
 | **Backend / Data** | REST API Integration (Retrofit), Room Database |
 | **Other Tools** | Coroutines, Glide for image loading, SharedPreferences for settings |
@@ -77,10 +77,10 @@ It parses data such as:
 
 ## 📱 Future Enhancements
 
--Add login & user authentication (Firebase or Clerk).
--Multi-language support.
--Personalized recipe recommendations using AI.
--Dark mode theme.
+- Add login & user authentication (Firebase or Clerk).
+- Multi-language support.
+- Personalized recipe recommendations using AI.
+- Dark mode theme.
 
 ---
 
@@ -94,8 +94,8 @@ If you’d like to improve features, fix bugs, or enhance UI — feel free to fo
 ## 🧑‍💻 Author
 
 Mohd Arif Rainee
-🎓 B.Tech Computer Engineering, Aligarh Muslim University
-📍 Android Developer | Firebase | Jetpack | Retrofit
+- 🎓 B.Tech Computer Engineering, Aligarh Muslim University
+- 📍 Android Developer | Firebase | Jetpack | Retrofit
 
 ---
 
