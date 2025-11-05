@@ -55,8 +55,6 @@ It parses data such as:
 
 ## 📸 Screenshots
 
-> 🖼️ Add your app screenshots below to make the README visually appealing!
-
 | Home Screen | Pantry | Favourites | Result | Recipe Details | Recipe Details | Recipe Details | 
 |-------------|-------------|-------------|-------------|-------------|-------------|-------------|
 | ![Home](screenshots/homepage.png) | ![Pantry](screenshots/pantrypage.png) | ![Favourites](screenshots/favouritepage.png) | ![Result](screenshots/resultpage.png) | ![Details](screenshots/detailpage1.png) | ![Details](screenshots/detailpage2.png) | ![Details](screenshots/detailpage3.png) 
